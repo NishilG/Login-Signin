@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile page</title>
+  <link rel="stylesheet" href="./mvp.css" />
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <style>
+    #login{
+      display: none;
+    }
+    #signup{
+      display: none;
+    }
+    .content{
+      align-items: flex-end;
+    }
+    .content-para{
+      width: 100px;
+      margin-right: 0;
+    }
+  </style>
+
+</head>
+<body class="h-14 bg-gradient-to-r from-purple-500 to-violet-500 ">  
+  <nav class="text-white flex justify-between" >
+     <div class="px-10 py-4 cursor-pointer">Home</div> 
+     <ul class="px-10 py-4 flex space-x-10 justify-end">
+         <li class="cursor-pointer" >About</li>
+         <li class="cursor-pointer">Contact</li>
+         <li class="cursor-pointer">FAQ</li>
+         <li class="cursor-pointer">Login</li>
+         <li class="cursor-pointer">Get Started</li>
+     </ul>
+ </nav>
+ <div class="content">
+  <img class="dp" src="maindp.jpg" alt="" srcset="">
+  <div class="content-para">
+    <p>This is a paragraph</p> 
+    <p>sdfsdf</p>
+    <p>dsfsf</p> 
+  </div>
+  
+  
+ </div>
+
+   <main>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d237.89958158548637!2d78.48870841474856!3d17.440879596121643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9a106456886d%3A0x79ab665844179d54!2sCTC%20C&#39;%20Block%2C%20Chenoy%20Trade%20Center%2C%20Park%20Ln%2C%20General%20Bazaar%2C%20Kalasiguda%2C%20Secunderabad%2C%20Telangana%20500003!5e0!3m2!1sen!2sin!4v1686476095595!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div id="Main">
+      <button id="Buy" onclick="watch()">Watch</button>
+      <button onclick="logout()">Log out</button>
+      <button id="Login" onclick="Login()">Login</button>
+      <button id="Buy" onclick="Buy()">Buy</button>
+      <button id="Signup" onclick="signup()">signup</button>
+      <button id="google-login">Login with google</button>
+    </div>
+     <section>
+      <form id="login">
+          <label>Email</label>
+          <input type="text" name="login" />
+          <label>Password</label>
+          <input type="password" name="password" />
+          <button>Log in</button>
+      </form>
+    </section>
+    <section>
+      <form id="signup">
+          <label>Signup</label>
+          <input type="text" name="login" />
+          <label>Password</label>
+          <input type="password" name="password" />
+          <button>Sign up</button>
+      </form>
+  </section>
+   </main>
+   
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-analytics.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-firestore.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+   <script>
+    // import { collection, doc, setDoc } from "firebase/firestore"; 
+    function Login() {
+      window.location.replace("/login");  
+    }
+    function signup(){
+      window.location.replace("/login"); 
+    }
+    function logout(){
+      Swal.fire('You have been Logout')
+      localStorage.removeItem("uid")
+    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCk2y1X6n-D0q7wvMkWpw3CrsBbd0rqT4g",
+      authDomain: "bubbly-hope-386107.firebaseapp.com",
+      projectId: "bubbly-hope-386107",
+      storageBucket: "bubbly-hope-386107.appspot.com",
+      messagingSenderId: "678578659104",
+      appId: "1:678578659104:web:33114c8b6bd87e66d20145",
+      measurementId: "G-YBTYCBMFSQ"
+    };
+        // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const analytics = firebase.analytics();
+    
+      // const docRef = doc(db, "users", "3bySUET3QKhHtpx5JKjCzYErEPi1");
+      // const docSnap = getDoc(docRef);
+      // console.log(docSnap.data()['Course']);
+    document.getElementById('google-login').addEventListener('click', GoogleLogin)
+    // document.getElementById('logout').addEventListener('click', LogoutUser)  
+    let provider = new firebase.auth.GoogleAuthProvider()
+    function GoogleLogin(){
+      console.log('Login Btn Call')
+      firebase.auth().signInWithPopup(provider).then(res=>{
+        localStorage.setItem("uid",res.user.uid)
+        document.getElementById('LoginScreen').style.display="none"
+        document.getElementById('dashboard').style.display="block"
+        showUserDetails(res.user)
+      }).catch(e=>{
+        console.log(e)
+      })
+    }
+    function watch(){
+      db.collection('users').doc(localStorage.uid).get().then(doc =>{
+        if (doc.data()['Course'] == true){
+          window.location.replace("/watch");
+        }
+        if (doc.data()['Course'] == false){
+          console.log("Buy Course")
+        }
+      })
+    }
+    function Buy(){
+      window.location.href = "/checkout";
+    }
+  </script>
+  <script>
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // const firebaseConfig1 = {
+    //     apiKey: "AIzaSyCk2y1X6n-D0q7wvMkWpw3CrsBbd0rqT4g",
+    //     authDomain: "bubbly-hope-386107.firebaseapp.com",
+    //     projectId: "bubbly-hope-386107",
+    //     storageBucket: "bubbly-hope-386107.appspot.com",
+    //     messagingSenderId: "678578659104",
+    //     appId: "1:678578659104:web:33114c8b6bd87e66d20145",
+    //     measurementId: "G-YBTYCBMFSQ"
+    // };
+    // // Initialize Firebase
+    // firebase.initializeApp(firebaseConfig1);
+
+    // const db2 = firebase.firestore();
+
+    // firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+
+</script>
+</body>
+</html>

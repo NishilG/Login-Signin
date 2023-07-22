@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="login.css">
+    <title>Document</title>
+    <meta name="google-signin-client_id" content="678578659104-qcnap88sagcis1vadgfm2hjm1dpj6f53.apps.googleusercontent.com">
+</head>
+<body class="h-14 bg-gradient-to-r from-purple-500 to-violet-500 ">  
+   <nav class="text-white flex justify-between" >
+      <div class="px-10 py-4 cursor-pointer">Home</div> 
+      <ul class="px-10 py-4 flex space-x-10 justify-end">
+          <li class="cursor-pointer" >About</li>
+          <li class="cursor-pointer">Contact</li>
+          <li class="cursor-pointer">FAQ</li>
+          <li class="cursor-pointer">Login</li>
+          <li class="cursor-pointer">Get Started</li>
+      </ul>
+  </nav>
+  <div class="log">
+   <div class="login">
+        <div class="wrapper">
+            <div class="title-text">
+               <div class="title login">
+                  Login Form
+               </div>
+               <div class="title signup">
+                  Signup Form
+               </div>
+            </div>
+            <div class="form-container">
+               <div class="slide-controls">
+                  <input type="radio" name="slide" id="login" checked>
+                  <input type="radio" name="slide" id="signup">
+                  <label for="login" class="slide login">Login</label>
+                  <label for="signup" class="slide signup">Signup</label>
+                  <div class="slider-tab"></div>
+               </div>
+               <div class="form-inner">
+                  <form id="login-form"action="#" class="login">
+                     <div class="field">
+                        <input type="text" name="login" placeholder="Email Address" required>
+                     </div>
+                     <div class="field">
+                        <input type="password" name="password" placeholder="Password" required>
+                     </div>
+                     <div class="pass-link">
+                        <a href="#">Forgot password?</a>
+                     </div>
+                     <div class="field btn">
+                        <div class="btn-layer"></div>
+                        <input type="submit" value="Login">
+                     </div>
+                     <div class="signup-link">
+                        Not a member? <a href="">Signup now</a>
+                     </div>
+                  </form>
+                  <form id="signup-form"action="#" class="signup">
+                     <div class="field">
+                        <input type="text" name="login" placeholder="Email Address" required>
+                     </div>
+                     <div class="field">
+                        <input type="password" name="password" placeholder="Password" required>
+                     </div>
+                     <div class="field">
+                        <input type="password" placeholder="Confirm password" required>
+                     </div>
+                     <div class="field btn">
+                        <div class="btn-layer"></div>
+                        <input type="submit" value="Signup">
+                     </div>
+                  </form>
+               </div>
+               <div class="google-btn">
+                  <div class="google-icon-wrapper">
+                    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+                  </div>
+                  <p class="btn-text" onclick="GoogleLogin()"><b>Sign in with google</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+     <script>
+        const loginText = document.querySelector(".title-text .login");
+        const loginForm = document.querySelector("form.login");
+        const loginBtn = document.querySelector("label.login");
+        const signupBtn = document.querySelector("label.signup");
+        const signupLink = document.querySelector("form .signup-link a");
+        signupBtn.onclick = (()=>{
+          loginForm.style.marginLeft = "-50%";
+          loginText.style.marginLeft = "-50%";
+        });
+        loginBtn.onclick = (()=>{
+          loginForm.style.marginLeft = "0%";
+          loginText.style.marginLeft = "0%";
+        });
+        signupLink.onclick = (()=>{
+          signupBtn.click();
+          return false;
+        });
+     </script>
+
+     <!-- This is for login -->
+<script>
+   const firebaseConfig = {
+      apiKey: "AIzaSyCk2y1X6n-D0q7wvMkWpw3CrsBbd0rqT4g",
+      authDomain: "bubbly-hope-386107.firebaseapp.com",
+      projectId: "bubbly-hope-386107",
+      storageBucket: "bubbly-hope-386107.appspot.com",
+      messagingSenderId: "678578659104",
+      appId: "1:678578659104:web:33114c8b6bd87e66d20145",
+      measurementId: "G-YBTYCBMFSQ"
+   };
+   firebase.initializeApp(firebaseConfig);
+   const db = firebase.firestore();
+   const analytics = firebase.analytics();
+   
+      // const docRef = doc(db, "users", "3bySUET3QKhHtpx5JKjCzYErEPi1");
+      // const docSnap = getDoc(docRef);
+      // console.log(docSnap.data()['Course']);
+   // document.getElementById('google-login').addEventListener('click', GoogleLogin)
+    // document.getElementById('logout').addEventListener('click', LogoutUser)  
+   
+   function GoogleLogin(){
+      console.log('Login Btn Call')
+      let provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().signInWithPopup(provider).then(res=>{
+         localStorage.setItem("uid",res.user.uid)
+         db.collection('users').doc(res.user.uid).set({Course : false})
+         console.log(res.user.uid)
+         window.location.replace("/");
+         showUserDetails(res.user)
+      }).catch(e=>{
+        console.log(e)
+        window.location.replace("/");
+      })
+   }
+    
+   window.addEventListener("DOMContentLoaded", () => {
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+      document
+            .getElementById("login-form")
+            .addEventListener("submit", (event) => {
+               event.preventDefault();
+               const login = event.target.login.value;
+               const password = event.target.password.value;
+
+               firebase
+                  .auth()
+                  .signInWithEmailAndPassword(login, password)
+                  .then(({ user }) => {
+                        localStorage.setItem("uid", user.uid);
+                  })
+                  .then(() => {
+                        return firebase.auth().signOut();
+                  })
+                  .then(() => {
+                     Swal.fire("You are logedin")
+                     window.location.replace("/");
+                     //  document.getElementById('login').style.display = "none";
+                     //  document.getElementById('Main').style.display = "block";
+                  });
+               return false;
+            });
+   });
+</script>
+
+     <!-- This is for signup -->
+
+     <script>
+     document
+     .getElementById("signup-form")
+     .addEventListener("submit", (event) => {
+         event.preventDefault();
+         const login = event.target.login.value;
+         const password = event.target.password.value;
+
+         firebase
+             .auth()
+             .createUserWithEmailAndPassword(login, password)
+             .then(({ user }) => {
+                 localStorage.setItem("uid",user.uid)
+                 
+             })
+             .then(() => {
+                 return firebase.auth().signOut();
+             })
+
+             .then(() => {   
+               Swal.fire('Your account has been created')
+               window.location.replace("/");
+               // document.getElementById('signup').style.display = "none";
+               // document.getElementById('Main').style.display = "block";
+               
+             })
+             .catch((err)=>{
+               Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: err.message,
+               })
+             })
+         return false;
+     });
+</script>
+</body>
+</html>
